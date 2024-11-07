@@ -3,7 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Director, Movie, Review
-from .serializer import DirectorSerializer, MovieSerializer, MovieDetailSerializer, ReviweSerializer
+from .serializer import (
+    DirectorSerializer, MovieSerializer, MovieDetailSerializer, ReviewSerializer, MovieReviewSerializer, DirectorDetailSerializer)
 
 @api_view(['GET'])
 def Directors_List(request):
@@ -18,7 +19,7 @@ def Director_Detail(request, pk):
         director = Director.objects.get(id=pk)
     except Director.DoesNotExist:
         return Response(data={"error": "Director not found"}, status=status.HTTP_404_NOT_FOUND)
-    data = DirectorSerializer(instance=director, many=False).data
+    data = DirectorDetailSerializer(instance=director, many=False).data
     return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -42,7 +43,7 @@ def Movie_Detail(request, pk):
 @api_view(['GET', 'POST'])
 def Review_List(request):
     review = Review.objects.all()
-    data = ReviweSerializer(instance=review, many=True).data
+    data = ReviewSerializer(instance=review, many=True).data
     return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -52,5 +53,24 @@ def Review_Detail(request, pk):
         review = Review.objects.get(id=pk)
     except Review.DoesNotExist:
         return Response(data={"error": "Movie not found"}, status=status.HTTP_404_NOT_FOUND)
-    data = ReviweSerializer(instance=review, many=False).data
+    data = ReviewSerializer(instance=review, many=False).data
+    return Response(data=data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def Movies_Reviews(request):
+    reviews = Review.objects.all()
+    data = MovieReviewSerializer(instance=reviews, many=True).data
+    return Response(data=data, status=status.HTTP_200_OK)
+
+
+
+@api_view(['GET'])
+def Review_By_Movie(request, pk):
+    try:
+        movie = Movie.objects.get(id=pk)
+    except Movie.DoesNotExist:
+        return Response(data={"error": "Movie not found"}, status=status.HTTP_404_NOT_FOUND)
+    review = Review.objects.filter(movie=movie)
+    data = ReviewSerializer(instance=review, many=True).data
     return Response(data=data, status=status.HTTP_200_OK)
