@@ -6,7 +6,7 @@ class Director(models.Model):
     movies = models.ManyToManyField('Movie', related_name='directors', blank=True)
 
     @property
-    def movie_count(self):
+    def movie_count(self,default=0):
         return self.movies.count()
     
     def __str__(self):
@@ -16,7 +16,7 @@ class Movie(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     duration = models.IntegerField()
-    director = models.ForeignKey(Director, on_delete=models.CASCADE)
+    director = models.ForeignKey(Director, on_delete=models.CASCADE, null= True, blank=True)
 
     def __str__(self):
         return self.title
