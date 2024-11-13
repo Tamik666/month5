@@ -28,7 +28,7 @@ RATING = ((rating, '* ' * rating) for rating in range(1, 6))
 class Review(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField(choices=RATING, default=1)
-    comment = models.TextField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True, max_length=1000)
 
     def __str__(self):
-        return self.comment
+        return Movie.objects.get(id=self.movie_id).title
