@@ -20,7 +20,7 @@ class RegisterUserView(CreateAPIView):
 
         with transaction.atomic():
             user = User.objects.create_user(username=username, password=password, email=email, is_active=False)
-            confirmation_code = secrets.token_urlsafe(16)
+            confirmation_code = str(secrets.randbelow(1000000)).zfill(6)
             ConfirmationCode.objects.create(user=user, code=confirmation_code)
 
         return Response(data={"username": username, "confirmation_code": confirmation_code}, status=status.HTTP_201_CREATED)
